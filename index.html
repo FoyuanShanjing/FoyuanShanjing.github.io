@@ -1,1 +1,493 @@
-
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>佛缘善境</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            background-image: url('https://i.ibb.co/dDN1LHK/270aac5e36195f7ab8f65a5961781346.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding-bottom: 60px; /* 增加底部填充，确保最后一篇文章不会被遮挡 */
+            background-color: rgba(255, 255, 255, 0.9); /* 添加背景色和透明度 */
+            border-radius: 10px;
+            padding: 20px;
+        }
+        header {
+            background: #8b5c1c;
+            color: #fff;
+            padding: 5px 0;
+            min-height: 50px;
+            border-bottom: #e6b800 3px solid;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        header h2 {
+            margin: 0;
+            font-weight: normal;
+            color: #fff;
+            font-size: 32px; /* 增大“佛缘善境”的字体 */
+        }
+        header nav {
+            margin-top: 5px;
+        }
+        header ul {
+            padding: 0;
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* 允许在移动端换行 */
+        }
+        header li {
+            padding: 0 10px;
+        }
+        header a {
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            white-space: nowrap; /* 防止按钮文字换行 */
+        }
+        header a:hover {
+            background-color: #e6b800;
+            color: #8b5c1c;
+        }
+        .content-section {
+            padding: 20px 0;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+            display: none;
+        }
+        h1, h2, h3 {
+            color: #8b5c1c;
+        }
+        .articles-container {
+            max-height: calc(100vh - 160px); /* 调整高度以确保底部栏不会遮挡文章 */
+            overflow-y: auto;
+        }
+        .article-preview {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+        .article-title {
+            cursor: pointer;
+            color: #e6b800;
+            text-decoration: underline;
+            margin-bottom: 10px;
+        }
+        .article-content {
+            display: none; /* 默认隐藏文章内容 */
+            color: #333;
+            margin-top: 10px;
+        }
+        .show-content .article-content {
+            display: block; /* 点击标题后显示文章内容 */
+        }
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto; /* 居中图片 */
+        }
+        footer {
+            background: #8b5c1c;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0; /* 减小底部栏的高度 */
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            font-size: 12px; /* 减小字体大小以适应较小的高度 */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .active {
+            background-color: #e6b800;
+            color: #8b5c1c;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        .image-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .image-slider img {
+            flex: none;
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 5px;
+            scroll-snap-align: start;
+            margin-right: 10px; /* Add some space between images */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>佛缘善境</h2>
+        <nav>
+            <ul>
+                <li><a href="#home" onclick="showSection('home', this)">本站</a></li>
+                <li><a href="#about" onclick="showSection('about', this)">关于我</a></li>
+                <li><a href="#articles" onclick="showSection('articles', this)">文章</a></li>
+                <li><a href="#scriptures" onclick="showSection('scriptures', this)">佛经佛咒分享</a></li>
+                <li><a href="#contact" onclick="showSection('contact', this)">联系我们</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section id="home" class="content-section">
+        <div class="container">
+            <h2>欢迎来到佛缘善境</h2>
+            <p>在这里，您可以探索佛教的智慧和哲学。</p>
+        </div>
+    </section>
+    <section id="about" class="content-section">
+        <div class="container">
+            <h2>关于我</h2>
+            <p>我是一个佛学爱好者，致力于弘扬佛教文化。</p>
+        </div>
+    </section>
+    <section id="articles" class="content-section">
+        <div class="container articles-container">
+            <h2>佛教文章</h2>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">一切的忏悔，都是为了无悔</h3>
+                <div class="article-content">
+                    <p><img src="https://i.ibb.co/frd75Tf/20240721112319.jpg" alt="文章图片"></p>
+                    <p>人，是很容易犯错误的，俗话说:“人非圣贤，孰能无过”，关键在于能不能正视自己的错误与过失。我们对圣贤的崇敬，可以跪拜在他们的脚下，表达自己的虔诚与恭敬;但是，我们是否有勇气跪倒在自己的脚下，这并不是把自己作为敌人或被自己打倒，而是理性地分析自己的过错，在我们的内心世界里，能够真正明白什么是对的，什么是不应该做的。最后，我们能够勇敢地承认错误，改正错误，安安心心走在明天里，能够过着无悔的人生。</p>
+                    <p>当我们稍懂人事时，我们知道自己的错误会带来别人的斥责，于是我们在掩饰自己的过错，学会了撒谎，过着心惊胆怯的日子;所以，我们需要一种敢于面对自己、面对人生，敢于面对社会，能够反思自己的勇气。忏悔就是一种勇气，只有把自己毫不留情地层层剥开，坦坦荡荡地把胸襟敞开时，才能算得上一个真正的人。忏悔者没有胆怯，因为对生命的真诚，对自己负责，是一种高尚而又坚强的勇气。</p>
+                    <p><img src="https://i.ibb.co/WkmqkKv/20240721112335.jpg" alt="文章图片"></p>
+                    <p>佛陀言:“有罪当忏悔，忏悔则安乐”，曾子也说:“吾日三省吾身”，所以我们首先要承认自己不是一个完美的人，我们的人生是一种有“缺陷”的人生;其次，能够真正反思自己、反省自己，能够在日常生活里保持着一颗警觉的心，观照每一念的当下;最后，我们能够改正自己的错误，和那灰色的过去说“永别”，不会重蹈前辙。</p>
+                    <p>所以，忏悔是内心觉醒反照的工夫，“不怕无明起，只怕觉照迟”，清醒地面对自己的人生，能够认识到自己的罪业。有时，这种反省不仅是为了自己，也是在总结人类的经验，用一颗真诚的心，坦诚面对生活中的风风雨雨，哪怕是千百次摔倒也要有勇气战胜自己。有时，我们可能一时冲动而盲目自大，其实我们非常渺小，我们只是宇宙中的一粒尘埃，风雨与岁月，随时将带走我们所拥有的一切。所以，忏悔不是让我们生活在悔恨中，而是让我们过着无悔的人生。</p>
+                    <p>忏悔，不仅是流露自己内心的歉疚和羞愧，更是展示生命的纯洁与无染。把尘埃与虚饰一同拂去，让真我显示无与伦比的光芒，这是一种曲折而又伟大的过程。从悲剧与噩梦中走出的人们，在经历了这种跪倒在自己面前的过程反思之后，自己将恢复本来面目，将是一个“本真”的自己。</p>
+                    <p><img src="https://i.ibb.co/WxsWMP7/20240721112345.jpg" alt="文章图片"></p>
+                    <p>忏悔不但是一种勇气，更是认识罪业的良心，是去恶向善的方法，是净化身心的力量。忏悔是法水，洗净罪业;忏悔是船筏，运载众生到解脱的涅槃彼岸;忏悔是药草，治疗烦恼百病;忏悔是明灯，照破无明黑暗;忏悔是城墙，摄护身心六根;忏悔是桥梁，导引通往成佛之道;忏悔是衣服，庄严菩提道果。</p>
+                    <p>人贵在有自知之明，肯认自己是罪恶凡夫，从而能够去恶向善，这是最伟大的自知;同时，又能够信仰自己的清净佛性，有成圣成贤的信心与勇气，这是最伟大的愿望。所以，有自知者的愿望，才是真信切愿;若不能认识到自己的根机，自己的罪业，我们的愿望则有可能是盲信瞎愿。所以，忏悔与佛性，自知与愿望，二者只有相辅相成，才能够使修道者从忏悔走向无悔。</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">“放下屠刀 立地成佛”的真正含义</h3>
+                <div class="article-content">
+                    <p><img src="https://i.ibb.co/1dLNp0k/20240721115601.jpg" alt="文章图片"></p>
+                    <p>▍什么是放下屠刀立地成佛</p>
+                    <p>佛教认为，人皆有佛性，作恶之人弃恶从善，即可成佛。于是，“放下屠刀，立地成佛”经常成为劝导作恶之人停止作恶的经典语句。但事实上，放下屠刀立地成佛并不是如此简单的意义。</p>
+                    <p>佛门的“放下屠刀”，并非指的是真正杀人的屠刀。这里的“屠刀”，指的是恶意、恶言、恶行及一切妄想、妄念、迷惑、颠倒、分别、执着。还有阿罗汉，含有杀贼之义，杀贼不是真的把贼给杀了，杀贼是杀尽烦恼之贼的意思。</p>
+                    <p>“放下屠刀，立地成佛”这句话的意思是：放下妄想、分别、执着，就是佛！“屠刀”的本质就是人对自身的迷惑；人使自我痴迷，并痴迷于自我，因此人才是成佛的最后一道障碍。</p>
+                    <p>▍放下屠刀立地成佛的故事</p>
+                    <p>佛经中，记载了这样一个故事。有位神通广大的黑齿梵志，可以上天入地，预知未来。他算出自己只有几天寿命很是苦恼，因为神通也不能帮他解决生死问题。在他痛苦彷徨之际，另一位天人让他去求教佛陀。五通仙人立刻捧着两朵花前去见佛，请教生死大事。</p>
+                    <p>佛陀告诉他：放下。他就把左手的花放下。佛陀又说：放下。他就把右手的花也放下。佛陀还是叫他放下。他说：我已没东西可放了。佛陀这才对他说：真正要放下的，不是手上的花，而是你对生死的执著。</p>
+                    <p>这就是放下屠刀立地成佛的故事原型，后来常常被用来劝导罪恶之徒停止罪恶，放下屠刀立地成佛。</p>
+                    <p>▍如何放下屠刀立地成佛</p>
+                    <p>佛教里的“放下屠刀，立地成佛”也是同理。所谓的屠刀，并非手中有形的刀，而是我们对生死烦恼、五欲尘劳的执著。这一切，并不是我们说放就能放下的。</p>
+                    <p>当我们苦恼时，说一声放下，就能立刻放下那些让我们苦恼不堪的事吗？我们想念亲人时，说一声放下，就能立刻把那个日夜思念的人忘掉吗？若非平日训练有素，你想一下子放下，根本是办不到的。如果放下已经不成问题，那么，成就也是不成问题的。</p>
+                    <p>因此，在佛教里，放下屠刀立地成佛并不特指罪恶之人，但凡是生活中能够让人产生烦恼和业障的东西，都是那把屠刀，而你若能放下屠刀，自然就能立地成佛。</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">谛闲大师：如何念佛，最为稳当</h3>
+                <div class="article-content">
+                    <p><img src="https://i.ibb.co/Khywj2Y/20240721114859.png" alt="文章图片"></p>
+                    <p>汝等念佛，不可太快，快则佛号不清，心不至诚；亦不可太缓，缓则容易昏沉，心亦不诚敬。故须念佛，要不缓不急。
+</p>
+                    <p>每日定数，至多三万，至少一万。一年三百六十日，日日做到，不可一日间断。</p>
+                    <p>正当念佛，要句句分明、字字清彻。从口中念出，耳里收来，名为口耳相传、圣凡不隔。</p>
+                    <p>依此念去，最极稳当，到得临命终时，自然感应道交，阿弥陀佛与诸圣众不来而来，亲垂接引。念佛行人不往而往，往生西方。</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">绍云老和尚：要有这种心理，你才能学到东西、增长福慧</h3>
+                <div class="article-content">
+                    <p><img src="https://i.ibb.co/fXkt15N/20240721115259.jpg" alt="文章图片"></p>
+                    <p>六祖大师在《坛经》上讲：“若真修道人，不见世间过。他非我不非，我非自有过。”世间上一切人都没有过错，有过就只有我有过，他错是他错，我不能错。</p>
+                    <p>非就是错，我不非，我一非就有过了，我不管人家，人家再错也好，我不管。我就把自己管住。要有这种心理，你才能学到东西。而且呢，能够增长福慧。</p>
+                    <p>你要没有这个心理，你就是干一点事情，你那心里总是抱有一股不服气的想法，这事你叫我干，你怎不干啊？哎呀！这就有股怨气在心里。有怨气在心里干那事和没有怨气干，用恭敬心做事情，两个福报不一样啊！同样干一个事所收的果报相差太远啊！</p>
+                    <p>所以古人为什么成就那么快？他就是一颗恭敬谦虚心，你拿一根绳子叫他下井，他就下井，他不讲我怎么下去啊。</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">梦参老和尚法语</h3>
+                <div class="article-content">
+                    <p>不要吝法，见一切众生，你所知道的好多，你能给它利益一点，就是要施给人，这叫法布施啊！</p>
+                    <p>不要执著讲经才是说法。不是的啦，你劝人念句“阿弥陀佛”，念念“般若般罗蜜”。</p>
+                    <p><img src="https://i.ibb.co/YR9ZkTW/20240721113548.jpg" alt="文章图片"></p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">佛教故事｜万事有因，强求不得</h3>
+                <div class="article-content">
+                    <p><img src="https://i.ibb.co/MkHJXL7/20240721120945.png" alt="文章图片"></p>
+                    <p>佛教之因果  有如是因，才有如是果  世人苦于“求不得”  或求不得爱人垂青  或求不得仕途顺遂  或求不得飞黄腾达  于是有人感慨  八苦之中，求不得最苦  殊不知，所有的“求不得”皆是果报</p>
+                    <p>梁武帝还没有显贵时，曾认识一位很贫困的人。梁武帝即位后，一天在苑里游玩，发现以前认识的那个人正在岸上拉船。梁武帝便上前同他打招呼，得知此人现在还像原来那样穷困，于是说：“你明天去见我，我让你当个县令。”</p>
+                    <p>第二天，这人前去见梁武帝，但没有见到。前后又去了很多次，但都因为遇到有什么事而无法通报。</p>
+                    <p>有一天，这个贫困的人听闻在附近有位僧人能知晓任何事的因缘，于是他想去向这位僧人请教原因。</p>
+                    <p>这人到了僧人那里后，还没开口说，僧人便已经知道他要问什么了，告诉他说：“你因为得不到县令之职来问我吗？你始终也不会得到啊！因为前世里，梁武帝曾经是位斋主，你当时曾写信答应要施舍给他五百钱，而最后却始终没有给他，所以现在他只是许诺给你官职，而你却始终得不到啊！”</p>
+                    <p>这人明白了这段因缘，也就不再去找梁武帝了，而梁武帝也没有再找他。</p>
+                    <p>佛家常说“人生活在迷中”。可见我们平常遇到的事可能都不是偶然的，都有前因后果的，这只有开智开慧的人才能看清看透。</p>
+                    <p>在诸多因缘的影响下，所求不得是很自然的一件事。如果认为自己已经尽力而为了，便不要只把眼光放在当下的结果上。</p>
+                    <p>执着于一时的结果，易生不平之心，或失意或自暴自弃，或嫉恨或哭天抢地，都是执着于“求不得”所带来的情绪。</p>
+                    <p>“宠辱不惊，看庭前花开花落；去留无意，望天上云卷云舒。”境随心转，对结果泰然处之是最好的做法。唯有如此，才能避免被负面情绪所困扰，才能更加客观理性地反省自己，在接下来的生活里脚踏实地。</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">清涼答疑丨佛弟子的法名有何深意？</h3>
+                <div class="article-content">
+                    <p>我们刚来到这个世界时，父母就给我们取了个“名字”寄托美好的期许，而当我们正式皈依三宝成为一名佛弟子时，皈依师也会给我们一个“法名”，作为修行路上的祝福和策励。</p>
+                    <p>法名，是佛弟子参加如法的皈依仪式后皈依师赠予的“菩提信物”，意味着身份的改变。佛弟子一定要记住：无始以来我们的生命都在混沌中度过，被贪嗔痴三毒烦恼，滚滚业力洪流所主宰；皈依三宝，代表着我们决心开启以三宝为中心自觉觉他、自利利他的全新生命道路。</p>
+                    <p>俗名，指代的是五蕴和合的色身，经历生老病死，终将消逝；而法名，指代的是“法身慧命”，是生命本质性的存在，不生不灭、不垢不净、不增不减。色身和法身的关系，有一种说法叫“借假修真”，指的是借用这个因缘假合的色身如法修行、证得法身，开启本具的圆满功德。</p>
+                    <p>法名，虽然也是一个代号，但其中蕴含着表法深意。作为解脱道和菩提道的行者应该勤修戒定慧、息灭贪嗔痴，勇往直前地前行。在新的修行征途中切莫为往昔习气羁绊，要追求真正有意义的人生。</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">佛教故事｜认识自己，幸福不期而至</h3>
+                <div class="article-content">
+                    <p>人活一世  必须要对自己有一种清醒的认识  才能活得明白，活得真实  西方有一句谚语  如果一个人知道自己想要什么  那么整个世界都会为之让路</p>
+                    <p>佛法里面有一个词叫“觉悟”，什么是觉悟呢？著名学者于丹对这个词有过这样一番解析：觉是“觉”字头，下面一个看见的“见”，悟是竖心旁加一个“吾”，所以“觉悟”本初的含义就是“见我心”，也就是“有能力看见自己的心”。</p>
+                    <p>有一个学僧慕名求见著名的禅师。当时，禅师正在锄草，草中刚好跑出一条蛇，禅师举锄便斩。</p>
+                    <p>学僧见此情景，不以为然地嘲讽道：“小僧久仰此地慈悲道风，可到了这里来，却只看见一个粗人。”</p>
+                    <p>禅师道：“像你这么说话，是你粗，还是我粗？”</p>
+                    <p>学僧不服气地问：“什么是粗？”</p>
+                    <p>禅师放下锄头。</p>
+                    <p>学僧楞了一下又问：“什么是细？”</p>
+                    <p>禅师举起锄头，作斩蛇的姿势。</p>
+                    <p>学僧愈发奇怪了，道：“你说的粗细，叫人无法了解！”</p>
+                    <p>禅师就反问道：“先不要管什么粗细，请问你在什么地方看见我斩蛇？”</p>
+                    <p>学僧毫不客气地道：“当下。”</p>
+                    <p>禅师用训诫的口气道：“你‘当下’不见到自己，却来见我斩蛇做什么？”</p>
+                    <p>学僧终于有所省悟。</p>
+                    <p>学僧是悟了，你是不是也像那个学僧一样有所启发呢？</p>
+                    <p>上学的时候我们学过一篇古文，其中有这么一段话：“人固不能无失，然试易地以处，平心而度之，吾果无一失乎？吾能知人之失而不能见吾之失，吾能指人之小失而不能见吾之大失，吾求吾失且不暇，何暇论人哉！</p>
+                    <p>人们总是喜欢关注别人，却忘了花点儿时间去审视自己，所以才会有很多的烦恼。其实，人这一生应付自己就够头疼的了，更何况把别人的烦恼也加诸自己身上呢！</p>
+                    <p>我们处在一个正在发生巨变的大时代，各种社会元素都在飞速发展，我们的生活也更复杂。当我们面对自己的时候，你会发现每一天都会比过去更迷惑，因为我们要面对的东西越来越多，可抉择的东西也更繁复。</p>
+                    <p>当我们开始每一天的生活时，面对未知的人生，我们需要更多的“觉悟”，更需要去认识自己，以生活为依据，从佛法中找到一点儿简单的真理。</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">清涼答疑丨念经是口诵还是默念？</h3>
+                <div class="article-content">
+                    <p>念佛既要口诵、也要心念  口诵对心念有帮助的  默念和心念没有太大区别  差不多是一样  就是不出声心里边念</p>
+                    <p>居士问：念佛是口念、心念、还是默念好？金刚念诵、瑜伽念诵是什么意思？</p>
+                    <p>1、音声念诵，乃举音长短分明，自他俱闻。</p>
+                    <p>2、金刚念诵，系唇齿密合，不出音声，微动舌端默诵。</p>
+                    <p>3、三摩地念诵，系住于定心而观真言字义字相之顺逆。</p>
+                    <p>4、真实念诵，又作实相念诵，即观真言之字义字相，如实修行。以上四种念诵功力，能灭一切罪障苦厄，成就一切功德。</p>
+                    <p>其中之一就是大声的念，而且吐字很清楚，谁都能听见，自己也能听见、他人也能听见。</p>
+                    <p>第二个是金刚念诵，嘴动而不发声。</p>
+                    <p>第三个念诵就是静心当中观想咒字，让它自己随念。</p>
+                    <p>第四真实念诵，就是用作实相念诵，观想真言的字义等等。当然这个时间需有三摩地念诵的基础，心安住在咒字当中，然后心想着咒字，发出一个一个的声音，这样念。真实念诵的时候要观想咒字发光照明十方，一切如来身、口、意加持，融入咒内等等。</p>
+                    <p>口诵和意念都可以，也包括阿弥陀佛的口诵和意念诵都可以。</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">执剑文殊菩萨画像欣赏</h3>
+                <div class="article-content">                 
+                    <p><img src="https://i.ibb.co/BzsS0jm/20240721120128.webp" alt="文章图片"></p>
+                    <p><img src="https://i.ibb.co/qgwhTTY/20240721120137.webp" alt="文章图片"></p>
+                    <p><img src="https://i.ibb.co/5vgDjP7/20240721120140.webp" alt="文章图片"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="scriptures" class="content-section">
+        <div class="container articles-container">
+            <h2>佛经佛咒分享</h2>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">楞严咒</h3>
+                <div class="article-content">
+                    <p>楞严咒，又称首楞严咒、大佛顶首楞严神咒等，出自于《大佛顶首楞严经》卷七，全咒分为五会，共计427句、2620字，是汉传佛教日常课诵咒语中最长的神咒，载于《禅门日诵》等课诵文本的早课</p>
+                    <p>楞严咒之名是一般的习称，经中称作佛顶光明摩诃萨怛多般怛啰无上神咒，而“摩诃．萨怛多．般怛啰”（梵语：mahā-sitātapatra）即“大白伞盖”之意[3]。因此，此咒即是大佛顶白伞盖陀罗尼（梵语：tathāgatoṣṇīṣa sitātapatrā dhāraṇī），为持明咒藏佛顶部中咒语，现存梵本及汉、藏、西夏、回鹘、蒙语多种译本</p>
+                    <p>楞严经中缘起</p>
+                    <p>《大佛顶首楞严经》卷一称阿难一人于所在城市，次第乞食，途经妓院，遭大幻术。摩登伽女以数论师的先梵天咒，勾摄阿难进到室内，将要毁坏其比丘戒的戒体。</p>
+                    <p>释迦牟尼佛知阿难咒术缠身，于是大放光明，出千宝莲花，中有佛化身，结跏趺坐宣说大佛顶首楞严神咒。又敕文殊师利菩萨以此咒往护阿难，破除恶咒，将两人带回。</p>
+                    <p>《大佛顶首楞严经》以此为引，开示有名为大佛顶首楞严王的三摩地，其主旨围绕在“常住真心，性净明体”，并在卷七讲述首楞严神咒及其建坛结界之法。</p>
+                    <p>楞严咒功效</p>
+                    <p>一、精进修行</p>
+                    <p>楞严经上有提到，楞严咒功效其中之一就是：「能令破戒之人，戒根清净; 未得戒者，令其得戒; 未精进者，令得精进; 无智慧者，令得智慧; 不清净者，速得清净; 不持斋戒，自成斋戒。」</p>
+                    <p>二、能灭重罪</p>
+                    <p>经上亦提及：「众破戒罪，无问轻重，一时销灭。 纵经饮酒，食噉五辛，种种不净，一切诸佛菩萨金刚天仙鬼神不将为过。 设着不净破弊衣服，一行一住悉同清净。 纵不作坛，不入道场，亦不行道，诵持此咒，还同入坛行道功德。 若造五逆无间重罪，及诸比丘比丘尼四弃八弃，诵此咒已，如是重业，犹如猛风吹散沙聚悉皆灭除，更无毫发。」</p>
+                    <p>也就是说，无论轻重戒罪，在诵读楞严咒之后皆可消灭。</p>
+                    <p>三、悟无生忍</p>
+                    <p>「从无量无数劫来，所有一切轻重罪障，从前世来未及忏悔。 若能读诵书写此咒，身上带持，若安住处庄宅园馆。 如是积业，犹汤销雪。 不久皆得悟无生忍。」 ，这是经上所言，读诵、书写楞严咒的另一个功效。</p>
+                    <p>四、消灾解冤</p>
+                    <p>潜心诵持《楞严咒》，可以使得灾障不侵，可镇恶星，不管是诸魔鬼神、旧业陈债，都不会影响到持诵楞严咒的人。</p>
+                    <p>五、与佛相伴</p>
+                    <p>经常读诵、书写、携带楞严咒者，十方如来的所有功德，都会回向给你，因此这群修行者，常与诸佛于同一处，因此可得大功德。</p>
+                    <p>六、远离毒害</p>
+                    <p>楞严经上有提到：「火不能烧，水不能溺，大毒小毒所不能害。 如是乃至龙天鬼神、精祇魔魅，所有恶咒，皆不能着。 心得正受。」 ，也就是说，把楞严咒随身携带的话，是可以远离毒害而不被水、火、毒物、恶咒所伤。</p>
+                    <p>链接: https://pan.baidu.com/s/11r-AWBFxJY_kP9L9ced6EA?pwd=9atx 提取码: 9atx 复制链接浏览器打开即可查看楞严咒</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">大悲咒</h3>
+                <div class="article-content">
+                    <p>大悲咒修持法与功德利益</p>
+                    <p>1、临命终时十方诸佛皆来授手。</p>
+                    <p>2、欲生何等佛土，随愿皆得往生。</p>
+                    <p>3、不堕三恶道。</p>
+                    <p>4、能生诸佛国。</p>
+                    <p>5、诵持大悲神咒者，于现在生中一切所求若不果遂者，不得为大悲心陀罗尼也，唯除不善、除不至诚。</p>
+                    <p>6、若诸众生侵损常住饮食财物，千佛出世不通忏悔，纵忏亦不除灭，今诵大悲神咒即得除灭。</p>
+                    <p>链接: https://pan.baidu.com/s/17FboLB29KQmjLeyAD2i35A?pwd=c8ve 提取码: c8ve  复制链接浏览器打开即可查看大悲咒</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">地藏经</h3>
+                <div class="article-content">
+                    <p>地藏菩萨本愿经功效</p>
+                    <p>1.天龙护念：得天龙八部吉祥护佑。</p>
+                    <p>2.善果日增：日日精勤不退，福慧增长，富贵长寿。</p>
+                    <p>3.集圣上因：累积修菩萨道的善因缘。</p>
+                    <p>4.菩提不退：慈悲之心不会退失，反而会让我们不断精进。</p>
+                    <p>5.衣食丰足：生活富足，拥有充足的衣物和食物，不必再担忧生活上的饥饿或贫穷等问题，得以安定且富贵地过一生。</p>
+                    <p>6.疾疫不临：不会得种种疾病，远离疾病的威胁。</p>
+                    <p>7.离水火灾：不会遇到水灾与火灾。</p>
+                    <p>8.无盗贼厄：不会遇到小偷、强盗。</p>
+                    <p>9.神鬼助持：得到诸天神鬼的保护与帮助。</p>
+                    <p>10.宿智命通：获得一种神通，能够充分知晓过去的事情。</p>
+                    <p>11.诸横消灭：所有的横事、恶事都一一消除。</p>
+                    <p>12.业道永除：过去所积累的恶业都能一一除尽，来生将会远离地狱，不受诸恶其扰。</p>
+                    <p>13.夜梦安乐：晚上睡觉时能够安然入睡，即便是做梦，也不受恶梦的侵扰。</p>
+                    <p>14.宿福受生：这份功德可以累积并跟随自己转生，享受这份功德所带来的福报和平安快乐。</p>
+                    <p>15.聪明利根：智慧通达、耳聪目明。</p>
+                    <p>链接: https://pan.baidu.com/s/1aAXhMggi063bBIoLuXSm2Q?pwd=gnb5 提取码: gnb5  复制链接浏览器打开即可查看地藏经</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">金刚经</h3>
+                <div class="article-content">
+                    <p>《金刚经》为禅宗大力弘扬，加上士大夫大多尊崇此经，认为读通之后可以放下执著并成就佛果，民间则认为本经典有不可思议感应，单纯诵经时也能感召金刚不动佛、金刚藏王菩萨、四金刚菩萨（金刚眷、金刚索、金刚爱、金刚语）、八大金刚来护法。明朝末年的秘密宗教大力推崇《金刚经》，将“空”等同于“道”，视之为能源出万物的“真空家乡”</p>
+                    <p>本经的主旨为“诸菩萨摩诃萨应如是生清净心：不应住色生心，不应住声、香、味、触、法生心，应无所住而生其心”。</p>
+                    <p>印顺导师阐述为：“如佛为须菩提说如此发心，直至究竟菩提，彻始彻终的归宗于离相无住。……般若无所住，无所住而生其心；不取诸相，即生实相，即名为佛。须知般若无住的现觉，即离相菩提的分证。”</p>
+                    <p>圣严法师阐述为：“心有所住，即离无上菩提之心；心能降伏，即是发无上菩提之心。”也就是达到“心无所住”的境界。</p>
+                    <p>江味农居士认为《金刚经》的宗旨，可以说是：“信心清净，即生实相。”</p>
+                    <p>凡夫众生与修行者最大的差别，在于众生执著四相（所谓四相，指阿特曼相（我相，ātman）、补特伽罗相（人相，pudgala）、萨埵相（众生相，sattva）、至婆相（寿者相，jīva）而轮回不断；而大乘行者则能于佛法修行中证悟金刚智慧渐渐舍离于四相之执著，直至圆成无上正等正觉。</p>
+                    <p>持诵功德</p>
+                    <p>佛祖说：“须菩提，如恒河中所有的沙粒，每一粒变成一条恒河，这么多条恒河的沙粒多不多呢？”须菩提答道：“光一条恒河的沙粒变成的恒河就无数可计了，何况这么多条恒河的沙粒呢！”[36]这时佛告诉须菩提：“这么多恒河的沙粒，每一粒再变成三千大千世界，假如有善男子、善女人用珍贵的七种宝贝装满这么多三千大千世界，然后用这些珍宝去作布施，那他（她）得的福德多不多呢？”毋庸置疑，多得无法形容了[37]。佛进一步讲：“若善男子、善女人，即使能够理解、接受本经中的四句偈诗、实行四句偈，然后给别人解释，那么他（她）得到的福德，比布施那么多三千大千世界珍宝的人得到的福德还要多。”</p>
+                    <p>为了强调此经的重要，佛陀又作了如下比喻：“假如有人早晨用恒河沙那么多的身体和生命来进行布施，上午也用恒河沙那么多的身体和生命来进行布施，下午还用恒河沙那么多的身体和生命来进行布施，像这样布施无量百千万亿劫的时间，那么这个人所得的福德真是不可思议、难以言表了。可是假如另一个人听了这部经，完全信任，没有怀疑，那么他得到的福德，比前面无量亿劫每天布施三恒河沙那么多身体和生命的人所得的福德还要多，如果他再去书写、受持、读诵、为人解说，那他的福德就更加殊胜无比了。”</p>
+                    <p>链接: https://pan.baidu.com/s/1v-8dzWPLl8DCUxrVMd4QaA?pwd=v4pr 提取码: v4pr  复制链接浏览器打开即可查看金刚经</p>
+                </div>
+            </div>
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">准提神咒</h3>
+                <div class="article-content">
+                    <p>准提神咒是释迦牟尼佛说的，出自《准提陀罗尼经》。</p>
+                    <p>佛言：此咒能灭十恶五逆一切罪障，成就一切白法功德。持此咒者，不问在家出家、饮酒食肉、有妻子，不拣净秽，但至心持诵，能使短命众生增寿无量。迦摩罗疾尚得除差，何况余病！若不消灭，无有是处。若诵满四十九日，准提菩萨令二圣者常随其人，所有善恶心之所念，皆于耳边一一具报。若有无福、无相、求官不遂、贫苦所逼者，常诵此咒，能令现世得轮王福，所求官位必得称遂。</p>
+                    <p>若求智慧得大智慧，求男女者便得男女。凡有所求，无不称遂，似如意珠，一切随心。</p>
+                    <p>持咒功德</p>
+                    <p>（一）佛在祗园会上，因哀怜众生易堕三途而说。至心持诵，能使短命众生，福寿无量，令现世得无量福，凡有所求无不称遂，如“如意珠”，一切随心，功效很大。</p>
+                    <p>（二）诵此陀罗尼，满九十万遍，无量劫所造十恶，四重、五无间罪，悉皆消灭，所生之处，常遇诸佛菩萨。丰饶财宝。常得出家。</p>
+                    <p>（三）若有在家善男女等诵持之者，其家无有灾横、病苦之所恼苦，诸有所作，无不谐偶，所说言语，人皆信受。</p>
+                    <p>（四）此陀罗尼，有大势力，至心诵持，必当自证，能令枯树生华，何况世间果报，若常诵持，水、火、刀兵、怨家、毒药皆不能害。</p>
+                    <p>（五）若人六亲不和、不相爱念、依法诵咒、所向和合，闻名见身，皆生欢喜，举凡所求无不遂心。况能结斋具戒，一心清净，依法诵持，不转此身，即证菩提，有大功力。</p>
+                    <p>（六）若依法诵持，一心精勤，功力说不可尽，随意所求，速得成就，受胜妙乐。</p>
+                    <p>（七）神咒是诸佛密印，佛佛相传，不通他解。</p>
+                    <p>（八）此法过去一切诸佛已说，未来一切诸佛当说，一切诸佛今说，我（释迦牟尼佛）今亦如是说。为利益一切众生故，令得无上菩提故。</p>
+                    <p>（九）若有薄福众生，无少善根者，无有根器之者，无有菩提分法者，若得闻此陀罗尼法，速疾证得阿耨多罗三藐三菩提。</p>
+                    <p>（十）若有人能常自忆念，诵持此咒，无量善根，皆得成就。</p>
+                    <p>（十一）此准提咒，一切诸佛菩萨等同说，独部别行，总摄二十五部真言坛法。龙树菩萨以偈赞曰：“准提功德聚，寂静心常诵，一切诸大难，无能侵是人，天上及人间，受福如佛等，遇此如意珠，定获无等等。”</p>
+                    <p>（十二）《大教王经》云：“七俱胝如来，三身赞说准提菩萨真言，能度一切贤圣，若人持诵，一切所求悉得成就，不久证得大菩提果，是知准提真言，密藏之中最为第一，是真言之母，神咒之王。”</p>
+                    <p>链接: https://pan.baidu.com/s/1i-__QdIK_CVao6UfUTYbnA?pwd=gjun 提取码: gjun  复制链接浏览器打开即可查看准提神咒</p>
+                </div>
+            </div> 
+            <div class="article-preview" onclick="toggleContent(this)">
+                <h3 class="article-title">观音菩萨六字真言</h3>
+                <div class="article-content">
+                    <p>观音菩萨的六字真言,又叫六字大明神咒--唵嘛呢叭咪吽。</p>                 
+                    <p><img src="https://i.ibb.co/xqjBZqt/20240721083805.jpg" alt="文章图片"></p>
+                    <p>此神咒为观音菩萨的心咒,具有多重且深广的意义与功德。是诸佛菩萨的无上馈赠，极其殊胜。常持诵六字大明咒可以消除病苦、刑罚、非时死之恐惧寿命增加，财富充盈。六字大明咒其内涵异常丰富、奥妙无穷至高无上，蕴藏了宇宙中的大能力大智慧、大慈悲。此咒即是观世音菩萨的微妙本心。久远劫前观音菩萨自己就是持此咒而修行成佛的佛名正法明如来。</p>
+                    <p><img src="https://i.ibb.co/r5K88j8/20240721095343.jpg" alt="文章图片"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="contact" class="content-section">
+        <div class="container">
+            <h2>联系我们</h2>
+            <p>Gmail：wuwangze123@gmail.com</p>
+        </div>
+    </section>
+    <footer>
+        <p>&copy; 2024 本站站长吴旺泽 保留所有权利.</p>
+    </footer>
+    <script>
+        function showSection(sectionId, element) {
+            var sections = document.querySelectorAll('.content-section');
+            sections.forEach(function(section) {
+                section.style.display = 'none';
+            });
+            var activeLinks = document.querySelectorAll('header a');
+            activeLinks.forEach(function(link) {
+                link.classList.remove('active');
+            });
+            document.getElementById(sectionId).style.display = 'block';
+            element.classList.add('active');
+        }
+        function toggleContent(element) {
+            element.classList.toggle('show-content');
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('home', document.querySelector('header a'));
+        });
+    </script>
+</body>
+</html>
